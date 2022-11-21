@@ -73,7 +73,7 @@ class App{
         // 안티 알리아스 활성화된다.
         const renderer = new THREE.WebGLRenderer({antialias : true});
         renderer.setPixelRatio(window.devicePixelRatio);
-        divContainer.appendChild(renderer.domElement);
+//        divContainer.appendChild(renderer.domElement);
         this._renderer = renderer;
 
         // THREE.js setup functions.
