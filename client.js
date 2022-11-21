@@ -69,7 +69,7 @@ class App{
 
         this.camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
 
-        // Three.js를 사용하기 위해 렌더링 방식을 정희 및 모니터 디바이스 픽셀 균형을 가져오고 #webg1-container 안에 그리기를 설정.
+        // Three.js를 사용하기 위해 렌더링 방식을 정희 및 모니터 디바이스 픽셀 균형을 가져오고 #webgl-container 안에 그리기를 설정.
         // 안티 알리아스 활성화된다.
         const renderer = new THREE.WebGLRenderer({antialias : true});
         renderer.setPixelRatio(window.devicePixelRatio);
