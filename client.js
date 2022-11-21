@@ -138,7 +138,7 @@ class App{
                 fragmentShader : MY_FRAGMENT_SHADER,
                 uniforms : {
                     globeTexture: {
-                        value : colorTexture 
+                   //     value : colorTexture 
                     } 
                 }
             })
