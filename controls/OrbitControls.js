@@ -1180,14 +1180,14 @@ var OrbitControls = function ( object, domElement ) {
 
 	//
 
-	scope.domElement.addEventListener( 'contextmenu', onContextMenu );
+//	scope.domElement.addEventListener( 'contextmenu', onContextMenu );
 
-	scope.domElement.addEventListener( 'pointerdown', onPointerDown );
-	scope.domElement.addEventListener( 'wheel', onMouseWheel );
+//	scope.domElement.addEventListener( 'pointerdown', onPointerDown );
+//	scope.domElement.addEventListener( 'wheel', onMouseWheel );
 
-	scope.domElement.addEventListener( 'touchstart', onTouchStart );
-	scope.domElement.addEventListener( 'touchend', onTouchEnd );
-	scope.domElement.addEventListener( 'touchmove', onTouchMove );
+//	scope.domElement.addEventListener( 'touchstart', onTouchStart );
+//	scope.domElement.addEventListener( 'touchend', onTouchEnd );
+//	scope.domElement.addEventListener( 'touchmove', onTouchMove );
 
 	// force an update at start
 
