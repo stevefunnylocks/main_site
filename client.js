@@ -61,7 +61,7 @@ class App{
     // THREE.js 구조 설계.
     constructor(){
      
-        const divContainer = document.querySelector("#webg1-container");
+        const divContainer = document.querySelector("#webgl-container");
         this._divContainer = divContainer;
 
         const scene = new THREE.Scene();
