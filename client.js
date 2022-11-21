@@ -5,12 +5,14 @@ import * as THREE from './build/three.module.js';
 import { OrbitControls } from './controls/OrbitControls.js';
 import Stats from './libs/stats.module.js';
 // global variables
-let scene;
-let camera;
-let renderer;
-const canvas = document.querySelector('.webgl');
 
-// 희상 추가 - 22.11.21
+const earth_daymap_8k_base_color = base_color;
+
+// 1. 백틱으로 묶어두고 void main()을 하게된다면 안에 내용 값을 브라우저는 독자적 프로그램으로 인식하고 프로그램을 실행 시켜준다.
+// 2. vertex shader 는 표면 캔바스에 그리기위한 점들의 집합체이다. 이 집합체는 하나의 공간을 만들고 내부 fragment shader를 그릴수 있는 뼈대를 제공해준다.
+// 3. fragment shader는 vertex shader로 잡아준 뼈대 안의 공간을 의미한다. 그 공간을 2D vector값을 가진 uv에 색 또는 이미지를 칠할수있다.
+
+// #region don't use third party programs only use custom shaders.
 
 // custom vertex shader.
 const MY_VERTEX_SHADER = `
@@ -55,122 +57,95 @@ void main()
 `;
 
 // #endregion
+class App{
+    // THREE.js 구조 설계.
+    constructor(){
+     
+        const divContainer = document.querySelector("#webg1-container");
+        this._divContainer = divContainer;
 
-// 희사 끝
+        const scene = new THREE.Scene();
+        this._scene = scene;
 
+        this.camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
 
+        // Three.js를 사용하기 위해 렌더링 방식을 정희 및 모니터 디바이스 픽셀 균형을 가져오고 #webg1-container 안에 그리기를 설정.
+        // 안티 알리아스 활성화된다.
+        const renderer = new THREE.WebGLRenderer({antialias : true});
+        renderer.setPixelRatio(window.devicePixelRatio);
+        divContainer.appendChild(renderer.domElement);
+        this._renderer = renderer;
 
+        // THREE.js setup functions.
+        this._setupCamera();
+        this._setupLight();
+        this._setupModel();
+        this._setupControls();
+        this._setupRaycaster();
 
-
-// scene setup
-scene = new THREE.Scene();
-
-// camera setup
-const fov = 60;
-const aspect = window.innerWidth / window.innerHeight;
-const near = 0.1;
-const far = 1000;
-
-camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-camera.position.z = 2;
-scene.add(camera);
-
-// renderer setup
-renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-    antialias: true,
-});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio((window.devicePixelRatio) ? window.devicePixelRatio : 1);
-renderer.autoClear = false;
-renderer.setClearColor(0x000000, 0.0);
-
-// orbit control setup
-const controls = new OrbitControls(camera, renderer.domElement);
-
-// earth geometry
-const earthGeometry = new THREE.SphereGeometry(0.6, 32, 32);
-
-// Materials 희상추가
-//const earthMaterials = new THREE.MeshstandardMaterial({
-  //  wireframe : true
-//})
+        // Three.js 리사이징 가능 설정.
+        window.onresize = this.resize.bind(this);
+        this.resize();
+        // Three.js 초당 프레임 마다 애니메이션 설정.
+        requestAnimationFrame(this.render.bind(this));
 
 
-   // THREE.js 유저의 마우스를 통한 카메라 컨트롤러. 희상 추가
-    //_setupControls({
-    //    const controls = new OrbitControls(this._camera, this._divContainer);
-     //   controls.enablePan = false;
-      //  controls.enableZoom = true;
-      //  controls.zoomSpeed = 0.35;
-      //  controls.minDistance = 2.5;
-      //  controls.maxDistance = 3.75;
-      //  controls.update()
-//});
+    }
 
 
+    // THREE.js 유저의 마우스를 통한 카메라 컨트롤러.
+    _setupControls(){
+        const controls = new OrbitControls(this._camera, this._divContainer);
+        controls.enablePan = false;
+        controls.enableZoom = true;
+        controls.zoomSpeed = 0.35;
+        controls.minDistance = 2.5;
+        controls.maxDistance = 3.75;
+        controls.update();
+    }
 
-// earth material
-const earthMaterial = new THREE.MeshPhongMaterial({
-    roughness: 1,
-    metalness: 0,
-    map: THREE.ImageUtils.loadTexture('texture/earthmap1k.jpg'),
-    bumpMap: THREE.ImageUtils.loadTexture('texture/earthbump.jpg'),
-    bumpScale: 0.3
-});
+    // THREE.js 라이트 셋업.
+    _setupLight(){
+        // const color = 0xFFFFFF;
+        // const intensity = 1000;
+        // const light = new THREE.DirectionalLight(color, intensity);
+        // light.position.set(3, 60, 60);
+        // this._scene.add(light);
+    }
 
-// earth mesh
-const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
-scene.add(earthMesh);
+    // THREE.js 카메라 셋업.
+    _setupCamera(){
+        const fov = 40;
+        const aspect = (window.innerWidth / window.innerHeight);  // the canvas default
+        const near = 0.01;
+        const far = 1000;
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        camera.position.z = 3.5;
+        this._camera = camera;
+    }
 
-// cloud Geometry
-const cloudGeometry = new THREE.SphereGeometry(0.63, 32, 32);
+    // THREE.js 3D 모델 셋업.
+    _setupModel(){
+        const textureLoader = new THREE.TextureLoader();
+        //color
+        const colorTexture = textureLoader.load(earth_daymap_8k_base_color);
+        colorTexture.encoding = THREE.sRGBEncoding
+        // #region create a sphere.
+        const sphere = new THREE.Mesh(
+            new THREE.SphereBufferGeometry(1, 64, 64),
+            new THREE.ShaderMaterial({
+                vertexShader : MY_VERTEX_SHADER,
+                fragmentShader : MY_FRAGMENT_SHADER,
+                uniforms : {
+                    globeTexture: {
+                        value : colorTexture 
+                    } 
+                }
+            })
+        );
+        // #endregion
 
-// cloud metarial
-const cloudMetarial = new THREE.MeshPhongMaterial({
-    map: THREE.ImageUtils.loadTexture('texture/earthCloud.png'),
-    transparent: true,
-});
-
-// cloud mesh
-const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMetarial);
-scene.add(cloudMesh);
-
-// galaxy geometry
-const starGeometry = new THREE.SphereGeometry(80, 64, 64);
-
-// galaxy material
-const starMaterial = new THREE.MeshBasicMaterial({
-    map : THREE.ImageUtils.loadTexture('texture/galaxy.png'),
-    side: THREE.BackSide
-});
-
-// galaxy mesh
-const starMesh = new THREE.Mesh(starGeometry, starMaterial);
-scene.add(starMesh);
-
-// ambient light
-const ambientlight = new THREE.AmbientLight(0xffffff, 0.2);
-scene.add(ambientlight);
-
-// point light
-const pointLight = new THREE.PointLight(0xffffff, 1)
-pointLight.position.set(5, 3, 5);
-scene.add(pointLight);
-
-// point light helper
-const Helper = new THREE.PointLightHelper(pointLight);
-scene.add(Helper);
-
-// handling resizing
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    render();
-}, false);
-
-//희사 추가 (22.11.21)
+        // #region create an Atmosphere.
 
         const Atmosphere = new THREE.Mesh(
             new THREE.SphereBufferGeometry(1, 64, 64),
@@ -291,9 +266,10 @@ window.addEventListener('resize', () => {
         
         // #endregion
 
+    }
 
     // THREE.js Raycast Interaction. python 함수와 함꼐 연결해야할 파트 !!!!!!
-    _setupRaycaster()
+    _setupRaycaster(){
         const pointer = new THREE.Vector2();
         const raycaster = new THREE.Raycaster();
 
@@ -351,31 +327,61 @@ window.addEventListener('resize', () => {
         this._mesh_collections = mesh_collections;
         this._currentMesh = currentMesh;
 
-    
+    }
 
+    // THREE.js 리사이즈.
+    resize(){
+        const width = this._divContainer.clientWidth;
+        const height = this._divContainer.clientHeight;
 
-/// 희상 - 끝
+        this._camera.aspect = width / height;
+        this._camera.updateProjectionMatrix();
 
+        this._renderer.setSize(width, height);
+    }
 
-// current fps
-const stats = Stats();
-document.body.appendChild(stats.dom);
+    // THREE.js 카메라 시점에서 렌더링을 하라는 명령이다.
+    render(time){
 
-// spinning animation
-const animate = () => {
-    requestAnimationFrame(animate);
-    starMesh.rotation.y -= 0.002;
-    earthMesh.rotation.y -= 0.0015;
-    cloudMesh.rotation.y -= 0.001;
-    controls.update();
-    //render();
-    renderer.render(scene, camera);
-    stats.update();
-};
+        //raycaster setup.
+        this._raycaster.setFromCamera(this._pointer, this._camera);
+        const raycasterCollections = this._raycaster.intersectObjects(this._mesh_collections);
+        
+        // 메쉬 레이캐스팅이 비활성화 일떄.
+        for (const original of this._mesh_collections)
+        {
+            original.material.color.set("red");
+            original.scale.set(1, 1, 1);
+        }
+        // 메쉬 레이캐스팅이 활성화 일떄.
+        for (const collection of raycasterCollections)
+        {
+            collection.object.material.color.set('pink');
+            collection.object.scale.set(1.25, 1.25, 1.25);
+        }
 
-// rendering
-const render = () => {
-    renderer.render(scene, camera);
+        if (raycasterCollections.length)
+        {
+            this._currentMesh = raycasterCollections[0];
+        }
+        else
+        {
+            this._currentMesh = null;
+        }
+
+        this._renderer.render(this._scene, this._camera);
+        this.update(time);
+        requestAnimationFrame(this.render.bind(this));
+    }
+
+    // THREE.js 모델을 시간값과  곱하여 회전 시킨다.
+    update(time){
+        time *= 0.00005; // secound unit
+        this.earth_group.rotation.y = time;
+    }
 }
 
-animate();
+// 윈도우가 실행 되었을 때 App constructor 함수값이 실행된다.
+window.onload = function(){
+    new App();
+}
