@@ -290,7 +290,6 @@ window.addEventListener('resize', () => {
         
         // #endregion
 
-    }
 
     // THREE.js Raycast Interaction. python 함수와 함꼐 연결해야할 파트 !!!!!!
     _setupRaycaster(){
