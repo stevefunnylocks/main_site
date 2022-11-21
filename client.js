@@ -105,6 +105,195 @@ window.addEventListener('resize', () => {
     render();
 }, false);
 
+//희사 추가 (22.11.21)
+
+        const Atmosphere = new THREE.Mesh(
+            new THREE.SphereBufferGeometry(1, 64, 64),
+            new THREE.ShaderMaterial({
+                vertexShader : MY_ATMOSPHERE_VERTEX_SHADER,
+                fragmentShader : MY_ATMOSPHERE_FRAGMENT_SHADER,
+                blending : THREE.AdditiveBlending,
+                side : THREE.BackSide
+            })
+        )
+
+        Atmosphere.scale.set(1.1,1.1,1.1);
+
+        // #endregion
+
+        // #region add pin Mesh.
+
+        // 1. fox_news Mesh settings.
+        const fox_mesh = new THREE.Mesh(
+            new THREE.SphereBufferGeometry(0.015 ,64, 64),
+            new THREE.MeshBasicMaterial({ color : 0xff0000 }),
+        );
+        this._foxmesh = fox_mesh;
+        // 2. nittere_news Mesh settings.
+        const nittere_mesh = new THREE.Mesh(
+            new THREE.SphereBufferGeometry(0.015 ,64, 64),
+            new THREE.MeshBasicMaterial({ color : 0xffff00 })
+        );
+        this._nitteremesh = nittere_mesh;
+        // 3. mbc Mesh settings.
+        const mbc_mesh = new THREE.Mesh(
+            new THREE.SphereBufferGeometry(0.015 ,64, 64),
+            new THREE.MeshBasicMaterial({ color : 0xffffff })
+        );
+        this._mbcmesh = mbc_mesh;
+        // 4. cctv Mesh settings.
+        const cctv_mesh = new THREE.Mesh(
+            new THREE.SphereBufferGeometry(0.015 ,64, 64),
+            new THREE.MeshBasicMaterial({ color : 0x00ff00 })
+        );
+        this._cctv_mesh = cctv_mesh;
+        // 5. bbc Mesh settings.
+        const bbc_mesh = new THREE.Mesh(
+            new THREE.SphereBufferGeometry(0.015 ,64, 64),
+            new THREE.MeshBasicMaterial({ color : 0x00ffff })
+        );
+        this._bbc_mesh = bbc_mesh;
+        // location Cylindrical coordinates function.
+
+        function convertLatLngToCartesian(p)
+        {
+            const lat = (p.lat) * Math.PI / 180;
+            const lng = (p.lng) * Math.PI / 180;
+            
+            const x = Math.cos(lng) * Math.sin(lat);
+            const y = Math.sin(lng) * Math.sin(lat);
+            const z = Math.cos(lat);
+
+            return { x,y,z }
+        }
+
+        // world wide news latitute lists.
+
+        const fox_news_location = { lat : 40.730610, lng : 73.935242 }; // USA fox news.
+        const nittere_news_location = { lat :  121.952832, lng : 136.939478 }; // japan nittere news.
+        const mbc_news_location = { lat :  128.952832, lng : 127.939478 }; // korea mbc news.
+        const cctv_news_location = { lat :  132.952832, lng : 117.939478 }; // china cctv news.
+        const bbc_news_location = { lat : 89.430610, lng : 51.935242 }; // uk bbc news.
+
+        // get [ fox news ] space world matrix position.
+        const fox_new_pos = convertLatLngToCartesian(fox_news_location);
+        // get [ nittere news ] space world matrix position.
+        const nittere_pos = convertLatLngToCartesian(nittere_news_location);
+        // get [ mbc news ] space world matrix position.
+        const mbc_pos = convertLatLngToCartesian(mbc_news_location);
+        // get [ cctv news ] space world matrix position.
+        const cctv_pos = convertLatLngToCartesian(cctv_news_location);
+        // get [ cctv news ] space world matrix position.
+        const bbc_pos = convertLatLngToCartesian(bbc_news_location);
+
+        // set [ fox news ] space world matrix position.
+        fox_mesh.position.set(fox_new_pos.x, fox_new_pos.y, fox_new_pos.z);
+        // set [ nittere news ] space world matrix position.
+        nittere_mesh.position.set(nittere_pos.x, nittere_pos.y, nittere_pos.z);
+        // set [ mbc news ] space world matrix position.
+        mbc_mesh.position.set(mbc_pos.x, mbc_pos.y, mbc_pos.z);
+        // set [ cctv news ] space world matrix position.
+        cctv_mesh.position.set(cctv_pos.x, cctv_pos.y, cctv_pos.z);
+        // set [ bbc news ] space world matrix position.
+        bbc_mesh.position.set(bbc_pos.x, bbc_pos.y, bbc_pos.z);
+
+
+        this._scene.add(fox_mesh);
+        this._scene.add(nittere_mesh);
+        this._scene.add(mbc_mesh);
+        this._scene.add(cctv_mesh);
+        this._scene.add(bbc_mesh);
+
+        // #endregion
+
+        // #region grouping earth meshes.
+
+
+
+        const group = new THREE.Group;
+        group.add(sphere);
+        group.add(Atmosphere);
+
+        // located place mesh add settings.
+        group.add(fox_mesh);
+        group.add(nittere_mesh);
+        group.add(mbc_mesh);
+        group.add(cctv_mesh);
+        group.add(bbc_mesh);
+
+        this._scene.add(group);
+        this.earth_group = group;
+        
+        // #endregion
+
+    }
+
+    // THREE.js Raycast Interaction. python 함수와 함꼐 연결해야할 파트 !!!!!!
+    _setupRaycaster(){
+        const pointer = new THREE.Vector2();
+        const raycaster = new THREE.Raycaster();
+
+        function onPointerMove( event ) {
+
+            // calculate pointer position in normalized device coordinates
+            // (-1 to +1) for both components
+        
+            pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        
+        }
+
+        window.addEventListener('mousemove', (e) => onPointerMove(e));
+
+        // mouse click.
+        let currentMesh = null;
+        const mouseClick = () =>{
+            if(this._currentMesh)
+            {
+                switch (this._currentMesh.object)
+                {
+                    case this._bbc_mesh:
+                        show_news('EK');
+                        break;
+                    
+                    case this._foxmesh:
+                        show_news('America');
+                        break;
+                    
+                    case this._cctv_mesh:
+                        show_news('China');
+                        break;
+
+                    case this._mbcmesh:
+                        show_news('Korea');
+                        break;
+
+                    case this._nitteremesh:
+                        show_news('Japan');
+                        break;
+                    
+                    default:
+                        console.log('올바른 국가를 선택해 주세요.');
+                        break;
+                }
+            }
+        }
+        window.addEventListener('click', () => mouseClick());
+
+        const mesh_collections = [this._foxmesh, this._nitteremesh, this._mbcmesh, this._cctv_mesh, this._bbc_mesh]
+
+        this._raycaster = raycaster;
+        this._pointer = pointer;
+        this._mesh_collections = mesh_collections;
+        this._currentMesh = currentMesh;
+
+    }
+
+
+
+/// 희상 - 끝
+
+
 // current fps
 const stats = Stats();
 document.body.appendChild(stats.dom);
