@@ -6,7 +6,7 @@ import { OrbitControls } from './controls/OrbitControls.js';
 import Stats from './libs/stats.module.js';
 // global variables
 
-const earth_daymap_8k_base_color = base_color;
+//const earth_daymap_8k_base_color = base_color;
 
 // 1. 백틱으로 묶어두고 void main()을 하게된다면 안에 내용 값을 브라우저는 독자적 프로그램으로 인식하고 프로그램을 실행 시켜준다.
 // 2. vertex shader 는 표면 캔바스에 그리기위한 점들의 집합체이다. 이 집합체는 하나의 공간을 만들고 내부 fragment shader를 그릴수 있는 뼈대를 제공해준다.
