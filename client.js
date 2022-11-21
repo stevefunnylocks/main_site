@@ -128,7 +128,7 @@ class App{
     _setupModel(){
         const textureLoader = new THREE.TextureLoader();
         //color
-        const colorTexture = textureLoader.load(earth_daymap_8k_base_color);
+   //     const colorTexture = textureLoader.load(earth_daymap_8k_base_color);
         colorTexture.encoding = THREE.sRGBEncoding
         // #region create a sphere.
         const sphere = new THREE.Mesh(
