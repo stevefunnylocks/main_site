@@ -351,7 +351,7 @@ window.addEventListener('resize', () => {
         this._mesh_collections = mesh_collections;
         this._currentMesh = currentMesh;
 
-    }
+    
 
 
 /// 희상 - 끝
