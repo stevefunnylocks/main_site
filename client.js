@@ -105,8 +105,8 @@ const earthGeometry = new THREE.SphereGeometry(0.6, 32, 32);
         controls.zoomSpeed = 0.35;
         controls.minDistance = 2.5;
         controls.maxDistance = 3.75;
-        controls.update();
-    }
+        controls.update()};
+
 
 
 // earth material
