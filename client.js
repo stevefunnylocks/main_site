@@ -353,7 +353,6 @@ window.addEventListener('resize', () => {
 
     }
 
-}
 
 /// 희상 - 끝
 
