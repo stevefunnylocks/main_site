@@ -10,6 +10,58 @@ let camera;
 let renderer;
 const canvas = document.querySelector('.webgl');
 
+// 희상 추가 - 22.11.21
+
+// custom vertex shader.
+const MY_VERTEX_SHADER = `
+varying vec2 vertexUV;
+varying vec3 vertexNormal;
+void main()
+{
+    vertexUV = uv;
+    vertexNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`;
+// custom Fragment shader.
+const MY_FRAGMENT_SHADER = `
+uniform sampler2D globeTexture;
+varying vec2 vertexUV;
+varying vec3 vertexNormal;
+void main()
+{
+    float intensity = 1.05 - dot(vertexNormal, vec3(0.0, 0.0, 1.0));
+    vec3 atmosphere = vec3(0.25, 0.75, 1.0) * pow(intensity, 1.5);
+    gl_FragColor = vec4(atmosphere + texture2D(globeTexture, vertexUV).xyz, 1.0);
+}
+`;
+// custom Atmosphere vertex shader.
+const MY_ATMOSPHERE_VERTEX_SHADER = `
+varying vec3 vertexNormal;
+void main()
+{
+    vertexNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 0.9);
+}
+`;
+// custom Atmosphere fragment shader.
+const MY_ATMOSPHERE_FRAGMENT_SHADER = `
+varying vec3 vertexNormal;
+void main()
+{
+    float intensity = pow(0.6 - dot(vertexNormal, vec3(0, 0, 1.0)), 2.0);
+    gl_FragColor = vec4(0.3, 0.6, 1.0, 1.0) * intensity;
+}
+`;
+
+// #endregion
+
+// 희사 끝
+
+
+
+
+
 // scene setup
 scene = new THREE.Scene();
 
