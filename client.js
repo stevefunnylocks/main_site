@@ -293,7 +293,7 @@ window.addEventListener('resize', () => {
 
 
     // THREE.js Raycast Interaction. python 함수와 함꼐 연결해야할 파트 !!!!!!
-    _setupRaycaster(){
+    _setupRaycaster()
         const pointer = new THREE.Vector2();
         const raycaster = new THREE.Raycaster();
 
