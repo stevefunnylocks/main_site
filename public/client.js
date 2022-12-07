@@ -42,9 +42,9 @@ const controls = new OrbitControls(camera, renderer.domElement);
 const earthGeometry = new THREE.SphereGeometry(0.6, 32, 32);
 
 // Materials 희상추가
-//const earthMaterials = new THREE.MeshstandardMaterial({
-  //  wireframe : true
-//})
+const earthMaterials = new THREE.MeshstandardMaterial({
+    wireframe : true
+})
 
 
 // earth material
