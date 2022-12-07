@@ -53,7 +53,7 @@ const earthMaterial = new THREE.MeshPhongMaterial({
     metalness: 0,
     map: THREE.ImageUtils.loadTexture('./public/texture/8k_mercury.jpg'),
   //  bumpMap: THREE.ImageUtils.loadTexture('./public/texture/earthbump.jpg'),
-    bumpScale: 0.3
+  //  bumpScale: 0.3
 });
 
 // earth mesh
