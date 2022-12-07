@@ -42,18 +42,18 @@ const controls = new OrbitControls(camera, renderer.domElement);
 const earthGeometry = new THREE.SphereGeometry(0.6, 32, 32);
 
 // Materials 희상추가
-const earthMaterials = new THREE.MeshstandardMaterial({
-    wireframe : true
-})
+//const earthMaterials = new THREE.MeshstandardMaterial({
+  //  wireframe : true
+//})
 
 
 // earth material
 const earthMaterial = new THREE.MeshPhongMaterial({
     roughness: 1,
     metalness: 0,
-    map: THREE.ImageUtils.loadTexture('./public/texture/8k_mercury.jpg'),
-  //  bumpMap: THREE.ImageUtils.loadTexture('./public/texture/earthbump.jpg'),
-  //  bumpScale: 0.3
+    map: THREE.ImageUtils.loadTexture('texture/8k_mercury.jpg'),
+  //  bumpMap: THREE.ImageUtils.loadTexture('texture/earthbump.jpg'),
+   // bumpScale: 0.3
 });
 
 // earth mesh
@@ -65,7 +65,7 @@ scene.add(earthMesh);
 
 // cloud metarial
 //const cloudMetarial = new THREE.MeshPhongMaterial({
- //   map: THREE.ImageUtils.loadTexture('./public/texture/earthCloud.png'),
+//    map: THREE.ImageUtils.loadTexture('texture/earthCloud.png'),
  //   transparent: true,
 //});
 
@@ -78,7 +78,7 @@ const starGeometry = new THREE.SphereGeometry(80, 64, 64);
 
 // galaxy material
 const starMaterial = new THREE.MeshBasicMaterial({
-    map : THREE.ImageUtils.loadTexture('./public/texture/galaxy.png'),
+    map : THREE.ImageUtils.loadTexture('texture/galaxy.png'),
     side: THREE.BackSide
 });
 
@@ -116,11 +116,25 @@ const animate = () => {
     requestAnimationFrame(animate);
     starMesh.rotation.y -= 0.002;
     earthMesh.rotation.y -= 0.0015;
-    //cloudMesh.rotation.y -= 0.001;
+   // cloudMesh.rotation.y -= 0.001;
     controls.update();
     render();
     stats.update();
 };
+
+//pin 추가
+
+//const pinMesh = new THREE.pinMesh(
+  //  new THREE.sphereBufferFeometry(0.1,20,20),
+  //  new THREE.MeshBasicMaterial({colore:0xff0000}),
+  //  pinMesh.position.set(1,0,0),
+  //  scene.add(pinMesh)
+//);
+
+//let mesh = new THREE.Mesh(
+//    new THREE.sphereBufferFeometry(0.1,20,20),
+//    new THREE.MeshBasicMaterial({colore:0xff0000})
+//)
 
 // rendering
 const render = () => {
