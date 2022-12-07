@@ -51,8 +51,8 @@ const earthGeometry = new THREE.SphereGeometry(0.6, 32, 32);
 const earthMaterial = new THREE.MeshPhongMaterial({
     roughness: 1,
     metalness: 0,
-    map: THREE.ImageUtils.loadTexture('./public/texture/earthmap1k.jpg'),
-    bumpMap: THREE.ImageUtils.loadTexture('./public/texture/earthbump.jpg'),
+    map: THREE.ImageUtils.loadTexture('./public/texture/8k_mercury.jpg'),
+  //  bumpMap: THREE.ImageUtils.loadTexture('./public/texture/earthbump.jpg'),
     bumpScale: 0.3
 });
 
@@ -61,17 +61,17 @@ const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earthMesh);
 
 // cloud Geometry
-const cloudGeometry = new THREE.SphereGeometry(0.63, 32, 32);
+//const cloudGeometry = new THREE.SphereGeometry(0.63, 32, 32);
 
 // cloud metarial
-const cloudMetarial = new THREE.MeshPhongMaterial({
-    map: THREE.ImageUtils.loadTexture('./public/texture/earthCloud.png'),
-    transparent: true,
-});
+//const cloudMetarial = new THREE.MeshPhongMaterial({
+ //   map: THREE.ImageUtils.loadTexture('./public/texture/earthCloud.png'),
+ //   transparent: true,
+//});
 
 // cloud mesh
-const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMetarial);
-scene.add(cloudMesh);
+//const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMetarial);
+//scene.add(cloudMesh);
 
 // galaxy geometry
 const starGeometry = new THREE.SphereGeometry(80, 64, 64);
@@ -116,7 +116,7 @@ const animate = () => {
     requestAnimationFrame(animate);
     starMesh.rotation.y -= 0.002;
     earthMesh.rotation.y -= 0.0015;
-    cloudMesh.rotation.y -= 0.001;
+    //cloudMesh.rotation.y -= 0.001;
     controls.update();
     render();
     stats.update();
