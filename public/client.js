@@ -108,8 +108,8 @@ window.addEventListener('resize', () => {
 }, false);
 
 // current fps
-const stats = Stats();
-document.body.appendChild(stats.dom);
+//const stats = Stats();
+//document.body.appendChild(stats.dom);
 
 // spinning animation
 const animate = () => {
